@@ -7,12 +7,16 @@ import com.mkmvpfam.gclogbook.data.Patient;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
 class GcLogbookApplicationTests {
@@ -38,10 +42,13 @@ class GcLogbookApplicationTests {
 
     @Test
     void getPatientById() {
-        var patient = restTemplate.getForObject(
+        ResponseEntity<Patient> response = restTemplate.getForEntity(
             createUrl("/patients/1"),
             Patient.class
         );
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        Patient patient = response.getBody();
         Assertions.assertEquals(1, patient.getId());
         Assertions.assertEquals(Gender.MALE, patient.getGender());
         Assertions.assertEquals(Specialty.CANCER, patient.getSpecialty());
@@ -51,18 +58,57 @@ class GcLogbookApplicationTests {
     }
 
     @Test
-    void getPatientsWithGenderParam() {
+    void getPatientById_NotFound() {
+        ResponseEntity<Patient> response = restTemplate.getForEntity(
+            createUrl("/patients/2"),
+            Patient.class
+        );
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
-    @Test
-    void getPatientsWithIndicationParam() {
-    }
+    @ParameterizedTest
+    @ValueSource(strings = { "gender=MALE", "specialty=CANCER", "indication=indication" }) // three parameters
+    void getPatientsWithSingleParam(String param) {
+        ResponseEntity<Patient[]> response = restTemplate.getForEntity(
+            createUrl("/patients?" + param),
+            Patient[].class
+        );
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 
-    @Test
-    void getPatientsWithSpecialtyParam() {
+        Patient patient = response.getBody()[0];
+        Assertions.assertEquals(1, patient.getId());
+        Assertions.assertEquals(Gender.MALE, patient.getGender());
+        Assertions.assertEquals(Specialty.CANCER, patient.getSpecialty());
+        Assertions.assertEquals(26, patient.getAge());
+        Assertions.assertTrue(patient.getIndication().contains("indication"));
+        Assertions.assertTrue(patient.getSummary().contains("summary"));
     }
 
     @Test
     void getPatientsMultiParam() {
+        ResponseEntity<Patient[]> response = restTemplate.getForEntity(
+            createUrl("/patients?gender=MALE&specialty=CANCER"),
+            Patient[].class
+        );
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(1, response.getBody().length);
+
+        Patient patient = response.getBody()[0];
+        Assertions.assertEquals(1, patient.getId());
+        Assertions.assertEquals(Gender.MALE, patient.getGender());
+        Assertions.assertEquals(Specialty.CANCER, patient.getSpecialty());
+        Assertions.assertEquals(26, patient.getAge());
+        Assertions.assertTrue(patient.getIndication().contains("indication"));
+        Assertions.assertTrue(patient.getSummary().contains("summary"));
+    }
+
+    @Test
+    void getPatientsMultiParam_NotFound() {
+        ResponseEntity<Patient[]> response = restTemplate.getForEntity(
+            createUrl("/patients?gender=UNKNOWN&specialty=CANCER"),
+            Patient[].class
+        );
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(0, response.getBody().length);
     }
 }

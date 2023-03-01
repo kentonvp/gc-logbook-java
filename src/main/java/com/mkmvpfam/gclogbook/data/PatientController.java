@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,41 +35,45 @@ public class PatientController {
     }
 
     @GetMapping(path="/{id}", produces="application/json")
-    public Patient getPatientById(@PathVariable Long id) {
-        logger.debug("Trying to get patient {}", id);
-        return patientRepo.findById(id).get();
+    public ResponseEntity<Patient> getPatientById(@PathVariable Long id) {
+        Optional<Patient> op = patientRepo.findById(id);
+
+        if (op.isEmpty()) {
+            return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(op.get(), HttpStatus.OK);
+
     }
 
     @GetMapping(produces="application/json")
-    public List<Patient> getPatientByParams(
+    public ResponseEntity<List<Patient>> getPatientByParams(
         @RequestParam Optional<Specialty> specialty,
         @RequestParam Optional<Gender> gender,
         @RequestParam(name="indication") Optional<String> partialIndication
     ) {
         List<Patient> patients = new ArrayList<>();
         if (specialty.isPresent()) {
-            logger.debug("Trying to get patient by Specialty::{}", specialty);
             patients.addAll(patientRepo.findBySpecialty(specialty.get()));
         } else if (gender.isPresent()) {
-            logger.debug("Trying to get patient by Gender::{}", gender);
             patients.addAll(patientRepo.findByGender(gender.get()));
         } else if (partialIndication.isPresent()) {
-            logger.debug("trying to get patient by indication::{}", partialIndication);
             patients.addAll(patientRepo.findByIndicationContaining(partialIndication.get()));
         } else {
-            return patientRepo.findAll();
+            return new ResponseEntity<>(patientRepo.findAll(), new HttpHeaders(), HttpStatus.OK);
         }
 
-        return patients.stream()
+        patients = patients.stream()
             .filter(patient -> (
                 (specialty.isEmpty() || specialty.get() == patient.getSpecialty()) &&
                 (gender.isEmpty() || gender.get() == patient.getGender()) &&
                 (partialIndication.isEmpty() || patient.getIndication().contains(partialIndication.get()))
             )).toList();
+
+        return new ResponseEntity<>(patients, new HttpHeaders(), HttpStatus.OK);
     }
 
-    @PostMapping(path="/",produces="application/json")
-    public long createPatient(@RequestBody BasePatient basePatient) {
+    @PostMapping(produces="application/json")
+    public ResponseEntity<Long> createPatient(@RequestBody BasePatient basePatient) {
         logger.debug("Creating patient from {}", basePatient);
         Patient patient = new Patient(
             basePatient.getDate(),
@@ -77,6 +84,6 @@ public class PatientController {
             basePatient.getSummary()
         );
         patientRepo.save(patient);
-        return patient.getId();
+        return new ResponseEntity<>(patient.getId(), new HttpHeaders(), HttpStatus.CREATED);
     }
 }
