@@ -69,7 +69,7 @@ public class PatientController {
                 (specialty.isEmpty() || specialty.get() == patient.getSpecialty()) &&
                 (gender.isEmpty() || gender.get() == patient.getGender()) &&
                 (partialIndication.isEmpty() || patient.getIndication().contains(partialIndication.get())) &&
-                (partialTestName.isEmpty() || patient.getIndication().contains(partialTestName.get()))
+                (partialTestName.isEmpty() || patient.getTestNames().contains(partialTestName.get()))
             )).toList();
 
         return new ResponseEntity<>(patients, new HttpHeaders(), HttpStatus.OK);

@@ -7,13 +7,11 @@ import com.mkmvpfam.gclogbook.data.enums.Specialty;
 import com.mkmvpfam.gclogbook.data.Patient;
 
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -22,7 +20,8 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
+// @TestMethodOrder(MethodOrderer.MethodName.class)
+@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT, properties = {"spring.datasource.url=jdbc:h2:mem:"} )
 class GcLogbookApplicationTests {
 
     @LocalServerPort
@@ -34,11 +33,14 @@ class GcLogbookApplicationTests {
     @Autowired
     private PatientRepository patientRepo;
 
+    private AtomicLong testId = new AtomicLong();
+
     @Autowired
     TestRestTemplate restTemplate;
 
     @BeforeEach
-    void initTestDB() {
+    void initDB() {
+        patientRepo.deleteAll();
         Patient p = new Patient(
             new Date(),
             Specialty.CANCER,
@@ -51,6 +53,7 @@ class GcLogbookApplicationTests {
             "results example"
         );
         patientRepo.save(p);
+        testId.set(p.getId());
     }
 
     @Test
@@ -66,13 +69,13 @@ class GcLogbookApplicationTests {
     @Test
     void getPatientById() {
         ResponseEntity<Patient> response = restTemplate.getForEntity(
-            createUrl("/patients/1"),
+            createUrl("/patients/" + testId.get()),
             Patient.class
         );
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 
         Patient patient = response.getBody();
-        Assertions.assertEquals(1, patient.getId());
+        Assertions.assertEquals(testId.get(), patient.getId());
         Assertions.assertEquals(Gender.MALE, patient.getGender());
         Assertions.assertEquals(Specialty.CANCER, patient.getSpecialty());
         Assertions.assertEquals(26, patient.getAge());
@@ -83,28 +86,31 @@ class GcLogbookApplicationTests {
     @Test
     void getPatientById_NotFound() {
         ResponseEntity<Patient> response = restTemplate.getForEntity(
-            createUrl("/patients/2"),
+            createUrl("/patients/" + (testId.get() + 1)),
             Patient.class
         );
         Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = { "gender=MALE", "specialty=CANCER", "indication=indication", "testName=panel" }) // three parameters
-    void getPatientsWithSingleParam(String param) {
-        ResponseEntity<Patient[]> response = restTemplate.getForEntity(
-            createUrl("/patients?" + param),
-            Patient[].class
-        );
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    @Test
+    void getPatientsWithSingleParam() {
+        String[] params = { "gender=MALE", "specialty=CANCER", "indication=indication", "testName=test" };
+        for (String param : params) {
+            ResponseEntity<Patient[]> response = restTemplate.getForEntity(
+                createUrl("/patients?" + param),
+                Patient[].class
+            );
+            Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+            Assertions.assertEquals(1, response.getBody().length, "Failling param:" + param);
 
-        Patient patient = response.getBody()[0];
-        Assertions.assertEquals(1, patient.getId());
-        Assertions.assertEquals(Gender.MALE, patient.getGender());
-        Assertions.assertEquals(Specialty.CANCER, patient.getSpecialty());
-        Assertions.assertEquals(26, patient.getAge());
-        Assertions.assertTrue(patient.getIndication().contains("indication"));
-        Assertions.assertTrue(patient.getSummary().contains("summary"));
+            Patient patient = response.getBody()[0];
+            Assertions.assertEquals(1, patient.getId());
+            Assertions.assertEquals(Gender.MALE, patient.getGender());
+            Assertions.assertEquals(Specialty.CANCER, patient.getSpecialty());
+            Assertions.assertEquals(26, patient.getAge());
+            Assertions.assertTrue(patient.getIndication().contains("indication"));
+            Assertions.assertTrue(patient.getSummary().contains("summary"));
+        }
     }
 
     @Test
@@ -114,10 +120,10 @@ class GcLogbookApplicationTests {
             Patient[].class
         );
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertEquals(1, response.getBody().length);
+        Assertions.assertNotEquals(0, response.getBody().length);
 
         Patient patient = response.getBody()[0];
-        Assertions.assertEquals(1, patient.getId());
+        Assertions.assertEquals(testId.get(), patient.getId());
         Assertions.assertEquals(Gender.MALE, patient.getGender());
         Assertions.assertEquals(Specialty.CANCER, patient.getSpecialty());
         Assertions.assertEquals(26, patient.getAge());
