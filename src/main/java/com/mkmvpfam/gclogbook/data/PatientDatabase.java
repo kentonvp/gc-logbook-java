@@ -16,18 +16,18 @@ import org.springframework.context.annotation.Configuration;
 public class PatientDatabase {
     private static final Logger LOGGER = LoggerFactory.getLogger(PatientDatabase.class);
 
-    @Bean
-    CommandLineRunner initDatabase(PatientRepository repository) {
-        return args -> {
-            Patient patient = repository.save( new Patient(
-                new Date(),
-                Specialty.CANCER,
-                Gender.MALE,
-                26,
-                "indication example",
-                "summary example"
-            ));
-            LOGGER.debug("Preloading {}", patient);
-        };
-    }
+    // @Bean
+    // CommandLineRunner initDatabase(PatientRepository repository) {
+    //     return args -> {
+    //         Patient patient = repository.save( new Patient(
+    //             new Date(),
+    //             Specialty.CANCER,
+    //             Gender.MALE,
+    //             26,
+    //             "indication example",
+    //             "summary example"
+    //         ));
+    //         LOGGER.debug("Preloading {}", patient);
+    //     };
+    // }
 }

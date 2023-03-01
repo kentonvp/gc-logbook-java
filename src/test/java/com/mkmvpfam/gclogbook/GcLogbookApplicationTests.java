@@ -1,12 +1,16 @@
 package com.mkmvpfam.gclogbook;
 
 import com.mkmvpfam.gclogbook.data.PatientController;
+import com.mkmvpfam.gclogbook.data.PatientRepository;
 import com.mkmvpfam.gclogbook.data.enums.Gender;
 import com.mkmvpfam.gclogbook.data.enums.Specialty;
 import com.mkmvpfam.gclogbook.data.Patient;
 
+import java.util.Date;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -28,7 +32,26 @@ class GcLogbookApplicationTests {
     private PatientController patientController;
 
     @Autowired
+    private PatientRepository patientRepo;
+
+    @Autowired
     TestRestTemplate restTemplate;
+
+    @BeforeEach
+    void initTestDB() {
+        Patient p = new Patient(
+            new Date(),
+            Specialty.CANCER,
+            Gender.MALE,
+            26,
+            "indication example",
+            "summary example",
+            true,
+            "test example",
+            "results example"
+        );
+        patientRepo.save(p);
+    }
 
     @Test
     void loadController() {
@@ -67,7 +90,7 @@ class GcLogbookApplicationTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "gender=MALE", "specialty=CANCER", "indication=indication" }) // three parameters
+    @ValueSource(strings = { "gender=MALE", "specialty=CANCER", "indication=indication", "testName=panel" }) // three parameters
     void getPatientsWithSingleParam(String param) {
         ResponseEntity<Patient[]> response = restTemplate.getForEntity(
             createUrl("/patients?" + param),
