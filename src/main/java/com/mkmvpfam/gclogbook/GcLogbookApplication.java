@@ -9,5 +9,4 @@ public class GcLogbookApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(GcLogbookApplication.class, args);
 	}
-
 }
