@@ -35,6 +35,7 @@ public class PatientController {
 
 	@GetMapping(path = "/{id}", produces = "application/json")
 	public ResponseEntity<Patient> getPatientById(@PathVariable Long id) {
+		logger.debug("getPatientById: {}", id);
 		Optional<Patient> op = patientRepo.findById(id);
 		if (op.isEmpty())
 			return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.NOT_FOUND);
@@ -48,14 +49,19 @@ public class PatientController {
 			@RequestParam(name = "testName") Optional<String> partialTestName) {
 		List<Patient> patients = new ArrayList<>();
 		if (specialty.isPresent()) {
+			logger.debug("getPatientByParams: specialty: {}", specialty.get());
 			patients.addAll(patientRepo.findBySpecialty(specialty.get()));
 		} else if (gender.isPresent()) {
+			logger.debug("getPatientByParams: gender: {}", gender.get());
 			patients.addAll(patientRepo.findByGender(gender.get()));
 		} else if (partialIndication.isPresent()) {
+			logger.debug("getPatientByParams: indication: {}", partialIndication.get());
 			patients.addAll(patientRepo.findByIndicationContaining(partialIndication.get()));
 		} else if (partialTestName.isPresent()) {
+			logger.debug("getPatientByParams: testName: {}", partialTestName.get());
 			patients.addAll(patientRepo.findByTestNamesContaining(partialTestName.get()));
 		} else {
+			logger.debug("getPatientByParams: ALL");
 			return new ResponseEntity<>(patientRepo.findAll(), new HttpHeaders(), HttpStatus.OK);
 		}
 
@@ -66,11 +72,13 @@ public class PatientController {
 						&& (partialTestName.isEmpty() || patient.getTestNames().contains(partialTestName.get()))))
 				.toList();
 
+		logger.debug("Found {} patients matching params", patients.size());
 		return new ResponseEntity<>(patients, new HttpHeaders(), HttpStatus.OK);
 	}
 
 	@PostMapping(produces = "application/json")
 	public ResponseEntity<Long> createPatient(@RequestBody BasePatient basePatient) {
+		logger.debug("createPatient: {}", basePatient);
 		Patient patient = new Patient(basePatient.getDate(), basePatient.getSpecialty(), basePatient.getGender(),
 				basePatient.getAge(), basePatient.getIndication(), basePatient.getSummary(),
 				basePatient.isTestsOrdered(), basePatient.getTestNames(), basePatient.getTestResults());
@@ -80,6 +88,7 @@ public class PatientController {
 
 	@PutMapping(produces = "application/json")
 	public ResponseEntity<Long> updatePatient(@RequestBody Patient patient) {
+		logger.debug("updatePatient: {}", patient);
 		Optional<Patient> dbPatient = patientRepo.findById(patient.getId());
 		if (dbPatient.isEmpty())
 			return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.NOT_FOUND);
@@ -101,7 +110,8 @@ public class PatientController {
 	}
 
 	@DeleteMapping(path = "/{id}")
-	public ResponseEntity<Long> deletePatient(@RequestParam Long id) {
+	public ResponseEntity<Long> deletePatient(@PathVariable Long id) {
+		logger.debug("deletePatient: {}", id);
 		patientRepo.deleteById(id);
 		return new ResponseEntity<>(id, new HttpHeaders(), HttpStatus.OK);
 	}

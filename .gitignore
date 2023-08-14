@@ -1,41 +1,49 @@
-HELP.md
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
+# Java backend
+backend/HELP.md
+backend/.gradle
+backend/build/
+!backend/gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
+backend/.apt_generated
+backend/.classpath
+backend/.factorypath
+backend/.project
+backend/.settings
+backend/.springBeans
+backend/.sts4-cache
+backend/bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
 
 ### VS Code ###
 .vscode/
 
+# Solid frontend
+frontend/dist
+frontend/.solid
+frontend/.output
+frontend/.vercel
+frontend/.netlify
+frontend/netlify
+
+# Environment
+.env
+.env*.local
+
+# dependencies
+frontend/node_modules
+
+# IDEs and editors
+/.idea
+frontend/.project
+frontend/.classpath
+frontend/*.launch
+frontend/.settings/
+
+# System Files
+**/.DS_Store
 
 *.json
 *.db
