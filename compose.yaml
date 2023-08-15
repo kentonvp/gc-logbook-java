@@ -10,6 +10,11 @@ services:
       - type: bind
         source: backend/patientsDb.mv.db
         target: /app/patientsDb.mv.db
+    healthcheck:
+      test: curl --fail http://localhost:8081/health || exit 1
+      start_period: 30s
+      start_interval: 2s
+      interval: 30s
 
   frontend:
     build:
@@ -20,3 +25,7 @@ services:
       - type: bind
         source: frontend/src
         target: /code/src
+    depends_on:
+      backend:
+        condition: service_healthy
+
