@@ -1,6 +1,7 @@
 import { For, Show, createResource, createSignal } from "solid-js";
 import "./RouteTable.css"
 import PatientCard from "./PatientCard";
+import NewPatientForm from "./NewPatientForm";
 import { Patient } from "~/patient";
 
 const fetchPatients = async (limit: number, offset: number, specialty: string, indication: string, summary: string, testName: string) => {
@@ -24,13 +25,20 @@ export default function RouteTable() {
     const [summaryFilter, setSummaryFilter] = createSignal("");
     const [specialty, setSpecialty] = createSignal("All");
 
+    const [onNewPatientView, toggleNewPatientView] = createSignal(false);
+    const [hasNewPatient, setNewPatient] = createSignal(true);
+
     const [patients] = createResource(
-        () => [limit(), offset(), specialty(), indicationFilter(), summaryFilter(), testNameFilter()] as const,
-        ([limit, offset, specialty, indication, summary, testName]) => fetchPatients(limit, offset, specialty, indication, summary, testName)
+        () => [hasNewPatient(), limit(), offset(), specialty(), indicationFilter(), summaryFilter(), testNameFilter()] as const,
+        ([hasNewPatient, limit, offset, specialty, indication, summary, testName]) => {
+            setNewPatient(false);
+            return fetchPatients(limit, offset, specialty, indication, summary, testName);
+        }
     );
 
-    const newPatient = () => {
-        console.log("Go to new patient view")
+    const succesfulNewPatient = () => {
+        toggleNewPatientView(false);
+        setNewPatient(true);
     };
 
     const loadMore = () => {
@@ -55,9 +63,11 @@ export default function RouteTable() {
 
     return (
         <>
+        <div>
+            <div class={onNewPatientView() ? "opacity-25" : ""}>
             <h1 class="text-center my-2">Patients Info</h1>
             <div class="flex flex-row gap-2">
-                <button class='bg-green-500 hover:bg-green-600 text-white py-2 px-4 ml-2 rounded-lg active:bg-green-700' onClick={newPatient}>Create New Patient</button>
+                <button class='bg-green-500 hover:bg-green-600 text-white py-2 px-4 ml-2 rounded-lg active:bg-green-700' onClick={toggleNewPatientView}>Create New Patient</button>
                 <div class="grow">{/* whitespace */}</div>
                 <select value={specialty()} onChange={(e) => setSpecialty(e.target.value)}>
                     <option value="All">All</option>
@@ -78,7 +88,7 @@ export default function RouteTable() {
                 <div>
                     <For each={patients()} fallback={<h2 class="p-4 text-center">Oops, no patients with given filters...</h2>}>
                         {(patient: Patient) => (
-                            <PatientCard patient={patient} />
+                            <PatientCard patient={patient} delete_callback={() => setNewPatient(true)} />
                         )}
                     </For>
                 </div>
@@ -88,6 +98,12 @@ export default function RouteTable() {
                     <div class="grow">{/* whitespace */}</div>
                 </div>
             </Show>
+            </div>
+
+            <div class={"absolute inset-1/4 z-40 bg-gray-300 rounded-lg shadow " + (!onNewPatientView() ? "hidden" : "")}>
+                <NewPatientForm success_callback={succesfulNewPatient} cancel_callback={() => toggleNewPatientView(false)}/>
+            </div>
+        </div>
         </>
     );
 }

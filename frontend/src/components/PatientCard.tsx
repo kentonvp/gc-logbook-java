@@ -3,7 +3,16 @@ import "./PatientCard.css"
 import { Dynamic } from "solid-js/web";
 import ColorText from "./ColorText";
 
-export default function PatientCard(props: { patient: Patient }) {
+export default function PatientCard(props: { patient: Patient, delete_callback: () => void}) {
+    const deletePatient = async () => {
+        console.log(`Deleting patient ${props.patient.id}`);
+
+        await fetch(`/api/patients/${props.patient.id}`, {
+            method: "DELETE",
+        })
+        props.delete_callback()
+    };
+
     const specialtyColors = {
         GENERAL: () => ColorText({ color: "bg-red-200", text: "General" }),
         PEDIATRIC: () => ColorText({ color: "bg-purple-200", text: "Pediatric" }),
@@ -18,10 +27,12 @@ export default function PatientCard(props: { patient: Patient }) {
             <div class="patient-grid">
                 <div class="info-card">
                     <p>
+                        <b>Id</b> {props.patient.id} <br/>
                         <b>Specialty</b> <Dynamic component={specialtyColors[props.patient.specialty]} /> <br/>
                         <b>Gender</b> {props.patient.gender} <br/>
                         <b>Age</b> {props.patient.age} <br/>
-                        <b>Indication</b> {props.patient.indication}
+                        <b>Indication</b> {props.patient.indication} <br/>
+                        <b>Date</b> {props.patient.date.slice(0,10)}
                     </p>
 
                 </div>
@@ -30,12 +41,13 @@ export default function PatientCard(props: { patient: Patient }) {
                         <b>Summary</b><br/>{props.patient.summary}
                     </p>
                 </div>
-                <div class="results-card">
+                <div class="results-card relative">
                     <p>
                         <b>Test Report</b><br/>
                         <b>Tests</b> {props.patient.testNames}<br/>
                         <b>Results</b> {props.patient.testResults}
                     </p>
+                    <button class='absolute top-0 right-0 bg-red-300 px-2' onClick={deletePatient}>X</button>
                 </div>
             </div>
         </>
