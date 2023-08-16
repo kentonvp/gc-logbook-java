@@ -65,16 +65,79 @@ public class Patient {
 	Patient() {
 	}
 
-	public Patient(Date date, Specialty specialty, Gender gender, int age, String indication, String summary,
-			boolean testsOrdered, String testNames, String testResults) {
-		this.date = date;
-		this.specialty = specialty;
-		this.gender = gender;
-		this.age = age;
-		this.indication = indication;
-		this.summary = summary;
-		this.testsOrdered = testsOrdered;
-		this.testNames = testNames;
-		this.testResults = testResults;
+	public Patient(PatientBuilder builder) {
+		this.date = builder.date;
+		this.specialty = builder.specialty;
+		this.gender = builder.gender;
+		this.age = builder.age;
+		this.indication = builder.indication;
+		this.summary = builder.summary;
+		this.testsOrdered = builder.testsOrdered;
+		this.testNames = builder.testNames;
+		this.testResults = builder.testResults;
+	}
+
+	public static class PatientBuilder {
+		private Date date;
+		private Specialty specialty;
+		private Gender gender;
+		private int age;
+		private String indication;
+		private String summary;
+		private boolean testsOrdered;
+		private String testNames;
+		private String testResults;
+
+		public PatientBuilder() {
+		}
+
+		public PatientBuilder withDate(Date date) {
+			this.date = date;
+			return this;
+		}
+
+		public PatientBuilder withSpecialty(Specialty specialty) {
+			this.specialty = specialty;
+			return this;
+		}
+
+		public PatientBuilder withGender(Gender gender) {
+			this.gender = gender;
+			return this;
+		}
+
+		public PatientBuilder withAge(int age) {
+			this.age = age;
+			return this;
+		}
+
+		public PatientBuilder withIndication(String indication) {
+			this.indication = indication;
+			return this;
+		}
+
+		public PatientBuilder withSummary(String summary) {
+			this.summary = summary;
+			return this;
+		}
+
+		public PatientBuilder withTestsOrdered(boolean testsOrdered) {
+			this.testsOrdered = testsOrdered;
+			return this;
+		}
+
+		public PatientBuilder withTestNames(String testNames) {
+			this.testNames = testNames;
+			return this;
+		}
+
+		public PatientBuilder withTestResults(String testResults) {
+			this.testResults = testResults;
+			return this;
+		}
+
+		public Patient build() {
+			return new Patient(this);
+		}
 	}
 }

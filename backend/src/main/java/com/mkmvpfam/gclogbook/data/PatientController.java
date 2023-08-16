@@ -84,9 +84,11 @@ public class PatientController {
 	@PostMapping(produces = "application/json")
 	public ResponseEntity<Long> createPatient(@RequestBody BasePatient basePatient) {
 		logger.debug("createPatient: {}", basePatient);
-		Patient patient = new Patient(basePatient.getDate(), basePatient.getSpecialty(), basePatient.getGender(),
-				basePatient.getAge(), basePatient.getIndication(), basePatient.getSummary(),
-				basePatient.isTestsOrdered(), basePatient.getTestNames(), basePatient.getTestResults());
+		Patient patient = new Patient.PatientBuilder().withDate(basePatient.getDate())
+				.withSpecialty(basePatient.getSpecialty()).withGender(basePatient.getGender())
+				.withAge(basePatient.getAge()).withIndication(basePatient.getIndication())
+				.withSummary(basePatient.getSummary()).withTestsOrdered(basePatient.isTestsOrdered())
+				.withTestNames(basePatient.getTestNames()).withTestResults(basePatient.getTestResults()).build();
 		patientRepo.save(patient);
 		return new ResponseEntity<>(patient.getId(), new HttpHeaders(), HttpStatus.CREATED);
 	}
@@ -104,7 +106,6 @@ public class PatientController {
 		op.setGender(patient.getGender());
 		op.setAge(patient.getAge());
 		op.setIndication(patient.getIndication());
-		op.setSummary(patient.getIndication());
 		op.setSummary(patient.getSummary());
 		op.setTestsOrdered(patient.isTestsOrdered());
 		op.setTestNames(patient.getTestNames());

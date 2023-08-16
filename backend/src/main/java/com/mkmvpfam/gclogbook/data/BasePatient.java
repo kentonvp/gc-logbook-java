@@ -50,16 +50,80 @@ public class BasePatient {
 	BasePatient() {
 	}
 
-	BasePatient(Date date, Specialty specialty, Gender gender, int age, String indication, String summary,
-			boolean testsOrdered, String testNames, String testResults) {
-		this.date = date;
-		this.specialty = specialty;
-		this.gender = gender;
-		this.age = age;
-		this.indication = indication;
-		this.summary = summary;
-		this.testsOrdered = testsOrdered;
-		this.testNames = testNames;
-		this.testResults = testResults;
+	public BasePatient(BasePatientBuilder builder) {
+		this.date = builder.date;
+		this.specialty = builder.specialty;
+		this.gender = builder.gender;
+		this.age = builder.age;
+		this.indication = builder.indication;
+		this.summary = builder.summary;
+		this.testsOrdered = builder.testsOrdered;
+		this.testNames = builder.testNames;
+		this.testResults = builder.testResults;
+	}
+
+	// Builder pattern
+	public static class BasePatientBuilder {
+		private Date date;
+		private Specialty specialty;
+		private Gender gender;
+		private int age;
+		private String indication;
+		private String summary;
+		private boolean testsOrdered;
+		private String testNames;
+		private String testResults;
+
+		public BasePatientBuilder() {
+		}
+
+		public BasePatientBuilder withDate(Date date) {
+			this.date = date;
+			return this;
+		}
+
+		public BasePatientBuilder withSpecialty(Specialty specialty) {
+			this.specialty = specialty;
+			return this;
+		}
+
+		public BasePatientBuilder withGender(Gender gender) {
+			this.gender = gender;
+			return this;
+		}
+
+		public BasePatientBuilder withAge(int age) {
+			this.age = age;
+			return this;
+		}
+
+		public BasePatientBuilder withIndication(String indication) {
+			this.indication = indication;
+			return this;
+		}
+
+		public BasePatientBuilder withSummary(String summary) {
+			this.summary = summary;
+			return this;
+		}
+
+		public BasePatientBuilder withTestsOrdered(boolean testsOrdered) {
+			this.testsOrdered = testsOrdered;
+			return this;
+		}
+
+		public BasePatientBuilder withTestNames(String testNames) {
+			this.testNames = testNames;
+			return this;
+		}
+
+		public BasePatientBuilder withTestResults(String testResults) {
+			this.testResults = testResults;
+			return this;
+		}
+
+		public BasePatient build() {
+			return new BasePatient(this);
+		}
 	}
 }

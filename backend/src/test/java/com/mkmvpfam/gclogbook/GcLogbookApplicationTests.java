@@ -39,8 +39,9 @@ class GcLogbookApplicationTests {
 	@BeforeEach
 	void initDB() {
 		patientRepo.deleteAll();
-		Patient p = new Patient(new Date(), Specialty.CANCER, Gender.MALE, 26, "indication example", "summary example",
-				true, "test example", "results example");
+		Patient p = new Patient.PatientBuilder().withDate(new Date()).withSpecialty(Specialty.CANCER)
+				.withGender(Gender.MALE).withAge(26).withIndication("indication example").withSummary("summary example")
+				.withTestsOrdered(true).withTestNames("test example").withTestResults("results example").build();
 		patientRepo.save(p);
 		testId.set(p.getId());
 	}
