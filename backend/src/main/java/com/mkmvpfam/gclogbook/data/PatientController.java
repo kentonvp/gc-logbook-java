@@ -46,7 +46,8 @@ public class PatientController {
 	public ResponseEntity<List<Patient>> getPatientByParams(@RequestParam Optional<Specialty> specialty,
 			@RequestParam Optional<Gender> gender,
 			@RequestParam(name = "indication") Optional<String> partialIndication,
-			@RequestParam(name = "testName") Optional<String> partialTestName) {
+			@RequestParam(name = "testName") Optional<String> partialTestName,
+			@RequestParam(name = "summary") Optional<String> partialSummary) {
 		List<Patient> patients = new ArrayList<>();
 		if (specialty.isPresent()) {
 			logger.debug("getPatientByParams: specialty: {}", specialty.get());
@@ -60,6 +61,9 @@ public class PatientController {
 		} else if (partialTestName.isPresent()) {
 			logger.debug("getPatientByParams: testName: {}", partialTestName.get());
 			patients.addAll(patientRepo.findByTestNamesContaining(partialTestName.get()));
+		} else if (partialSummary.isPresent()) {
+			logger.debug("getPatientByParams: summary: {}", partialSummary.get());
+			patients.addAll(patientRepo.findBySummaryContaining(partialSummary.get()));
 		} else {
 			logger.debug("getPatientByParams: ALL");
 			return new ResponseEntity<>(patientRepo.findAll(), new HttpHeaders(), HttpStatus.OK);
@@ -69,7 +73,8 @@ public class PatientController {
 				.filter(patient -> ((specialty.isEmpty() || specialty.get() == patient.getSpecialty())
 						&& (gender.isEmpty() || gender.get() == patient.getGender())
 						&& (partialIndication.isEmpty() || patient.getIndication().contains(partialIndication.get()))
-						&& (partialTestName.isEmpty() || patient.getTestNames().contains(partialTestName.get()))))
+						&& (partialTestName.isEmpty() || patient.getTestNames().contains(partialTestName.get()))
+						&& (partialSummary.isEmpty() || patient.getSummary().contains(partialSummary.get()))))
 				.toList();
 
 		logger.debug("Found {} patients matching params", patients.size());

@@ -78,7 +78,8 @@ class GcLogbookApplicationTests {
 
 	@Test
 	void getPatientsWithSingleParam() {
-		String[] params = {"gender=MALE", "specialty=CANCER", "indication=indication", "testName=test"};
+		String[] params = {"gender=MALE", "specialty=CANCER", "indication=indication", "testName=test",
+				"summary=summary"};
 		for (String param : params) {
 			ResponseEntity<Patient[]> response = restTemplate.getForEntity(createUrl("/patients?" + param),
 					Patient[].class);
@@ -98,7 +99,7 @@ class GcLogbookApplicationTests {
 	@Test
 	void getPatientsMultiParam() {
 		ResponseEntity<Patient[]> response = restTemplate
-				.getForEntity(createUrl("/patients?gender=MALE&specialty=CANCER"), Patient[].class);
+				.getForEntity(createUrl("/patients?gender=MALE&specialty=CANCER&summary=summary"), Patient[].class);
 		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 		Assertions.assertNotEquals(0, response.getBody().length);
 

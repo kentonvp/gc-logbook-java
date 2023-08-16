@@ -12,5 +12,7 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 
 	List<Patient> findByIndicationContaining(String infix);
 
+	List<Patient> findBySummaryContaining(String infix);
+
 	List<Patient> findByTestNamesContaining(String infix);
 }
