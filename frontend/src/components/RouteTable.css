@@ -1,0 +1,7 @@
+.filter-box {
+  @apply
+    px-4
+    rounded-full
+    border-2
+    shadow
+}
