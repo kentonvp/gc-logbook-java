@@ -1,5 +1,5 @@
 import { For, Show, createResource, createSignal } from "solid-js";
-import "./RouteTable.css"
+import "./PatientsHome.css"
 import PatientCard from "./PatientCard";
 import NewPatientForm from "./NewPatientForm";
 import { Patient } from "~/patient";
@@ -17,7 +17,7 @@ const fetchPatients = async (limit: number, offset: number, specialty: string, i
     return res.json();
 }
 
-export default function RouteTable() {
+export default function PatientsHome() {
     const [limit, setLimit] = createSignal(10);
     const [offset, setOffset] = createSignal(0);
     const [testNameFilter, setTestNameFilter] = createSignal("");
@@ -96,7 +96,7 @@ export default function RouteTable() {
                 </div>
             </div>
             <div class="grow">{/* whitespace */}</div>
-            <div class={"absolute inset-1/4" + (!onNewPatientView() ? " hidden" : "")}>
+            <div class={"absolute inset-1/4 z-10" + (!onNewPatientView() ? " hidden" : "")}>
                 <NewPatientForm success_callback={succesfulNewPatient} cancel_callback={() => toggleNewPatientView(false)} />
             </div>
             <div class={"flex justify-center" + (onNewPatientView() ? " opacity-20" : "")}>
