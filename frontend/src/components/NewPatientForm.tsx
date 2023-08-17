@@ -30,16 +30,17 @@ export default function NewPatientForm(props: {success_callback: () => void, can
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(patient)
         })
+
+        // todoL remove text from input fields
         props.success_callback()
     };
 
     return (
-    <>
-        <div class="grid grid-rows-6">
+        <div class="grid grid-rows-6 bg-purple-400 shadow-lg rounded-lg">
             <div class="row-span-5">
                 <div class="grid grid-cols-6 gap-1 p-1">
                     <div class='col-span-1'>
-                        <div class='flex flex-col justify-around bg-pink-500 p-2'>
+                        <div class='flex flex-col justify-around p-2'>
                             <div>
                                 <label class="p-1" for="specialty"><strong>Specialty</strong></label>
                                 <select value="GENERAL" name="specialty" id="specialty" onChange={(e) => setSpecialty(e.target.value)}>
@@ -95,17 +96,18 @@ export default function NewPatientForm(props: {success_callback: () => void, can
                     </div>
                 </div>
             </div>
-            <div class="flex justify-center gap-2 mb-2">
-                <button
-                    class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg active:bg-green-700 w-1/4"
-                    onClick={createPatient}
-                    >Submit</button>
-                <button
-                    class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg active:bg-red-700 w-1/4"
-                    onClick={props.cancel_callback}
-                    >Cancel</button>
+            <div>
+                <div class="flex justify-center gap-2 mb-2">
+                    <button
+                        class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg active:bg-green-700 w-1/4"
+                        onClick={createPatient}
+                        >Submit</button>
+                    <button
+                        class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg active:bg-red-700 w-1/4"
+                        onClick={props.cancel_callback}
+                        >Cancel</button>
+                </div>
             </div>
         </div>
-        </>
     );
 }
