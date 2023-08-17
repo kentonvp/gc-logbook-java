@@ -64,10 +64,10 @@ export default function RouteTable() {
     return (
         <div class="flex flex-col">
             <div class="static">
-                <div class={onNewPatientView() ? "opacity-50" : ""}>
+                <div class={onNewPatientView() ? "opacity-20" : ""}>
                     <h1 class="text-center my-2">Patients Info</h1>
                     <div class="flex flex-row gap-2">
-                        <button class='btn-purple ml-2' onClick={() => toggleNewPatientView(true)}>Create New Patient</button>
+                        <button class='btn-purple ml-2' onClick={() => toggleNewPatientView(true)} disabled={onNewPatientView()}>Create New Patient</button>
                         <div class="grow">{/* whitespace */}</div>
                         <select value={specialty()} onChange={(e) => setSpecialty(e.target.value)}>
                             <option value="All">All</option>
@@ -81,7 +81,7 @@ export default function RouteTable() {
                         <input ref={indicationFilterRef} class="filter-box" type="string" placeholder="Indication filter" onChange={(e) => setIndicationFilter(e.target.value)} />
                         <input ref={summaryFilterRef} class="filter-box" type="string" placeholder="Summary filter" onChange={(e) => setSummaryFilter(e.target.value)} />
                         <input ref={testNameFilterRef} class="filter-box" type="string" placeholder="Test name filter" onChange={(e) => setTestNameFilter(e.target.value)} />
-                        <button class="btn-purple mr-2" onClick={clearInputFilters}>Clear Filters</button>
+                        <button class="btn-purple mr-2" onClick={clearInputFilters} disabled={onNewPatientView()}>Clear Filters</button>
                     </div>
 
                     <Show when={patients()} fallback={<h2 class="p-4 text-center">Loading...</h2>}>
@@ -99,8 +99,8 @@ export default function RouteTable() {
             <div class={"absolute inset-1/4" + (!onNewPatientView() ? " hidden" : "")}>
                 <NewPatientForm success_callback={succesfulNewPatient} cancel_callback={() => toggleNewPatientView(false)} />
             </div>
-            <div class="flex justify-center">
-                <button class='btn-purple w-1/4' onClick={loadMore}>Load More</button>
+            <div class={"flex justify-center" + (onNewPatientView() ? " opacity-20" : "")}>
+                <button class='btn-purple w-1/4' onClick={loadMore} disabled={onNewPatientView()}>Load More</button>
             </div>
         </div>
     );
