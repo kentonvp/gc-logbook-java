@@ -2,6 +2,8 @@ package com.mkmvpfam.gclogbook.data;
 
 import com.mkmvpfam.gclogbook.data.enums.Gender;
 import com.mkmvpfam.gclogbook.data.enums.Specialty;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -48,6 +50,7 @@ public class Patient {
 
 	@Getter
 	@Setter
+	@Column(length = 1000)
 	private String summary;
 
 	@Getter

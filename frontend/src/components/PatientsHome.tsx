@@ -62,8 +62,8 @@ export default function PatientsHome() {
     };
 
     return (
-        <div class="flex flex-col">
-            <div class="static">
+        <div class="flex flex-col h-full">
+            <div>
                 <div class={onNewPatientView() ? "opacity-20" : ""}>
                     <h1 class="text-center my-2">Patients Info</h1>
                     <div class="flex flex-row gap-2">
@@ -88,17 +88,17 @@ export default function PatientsHome() {
                         <div>
                             <For each={patients()} fallback={<h2 class="p-4 text-center">Oops, no patients with given filters...</h2>}>
                                 {(patient: Patient) => (
-                                    <PatientCard patient={patient} delete_callback={() => setNewPatient(true)} />
+                                    <PatientCard patient={patient} canDelete={() => !onNewPatientView()} deleteCallback={() => setNewPatient(true)} />
                                 )}
                             </For>
                         </div>
                     </Show>
                 </div>
             </div>
-            <div class="grow">{/* whitespace */}</div>
             <div class={"absolute inset-1/4 z-10" + (!onNewPatientView() ? " hidden" : "")}>
-                <NewPatientForm success_callback={succesfulNewPatient} cancel_callback={() => toggleNewPatientView(false)} />
+                <NewPatientForm successCallback={succesfulNewPatient} cancelCallback={() => toggleNewPatientView(false)} />
             </div>
+            <div class="grow"> {/* whitspace */} </div>
             <div class={"flex justify-center" + (onNewPatientView() ? " opacity-20" : "")}>
                 <button class='btn-purple w-1/4' onClick={loadMore} disabled={onNewPatientView()}>Load More</button>
             </div>

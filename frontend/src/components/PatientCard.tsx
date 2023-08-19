@@ -3,14 +3,14 @@ import "./PatientCard.css"
 import { Dynamic } from "solid-js/web";
 import ColorText from "./ColorText";
 
-export default function PatientCard(props: { patient: Patient, delete_callback: () => void }) {
+export default function PatientCard(props: { patient: Patient, deleteCallback: () => void, canDelete: () => boolean}) {
     const deletePatient = async () => {
         console.log(`Deleting patient ${props.patient.id}`);
 
         await fetch(`/api/patients/${props.patient.id}`, {
             method: "DELETE",
         })
-        props.delete_callback()
+        props.deleteCallback()
     };
 
     const specialtyColors = {
@@ -26,7 +26,7 @@ export default function PatientCard(props: { patient: Patient, delete_callback: 
         <div class="patient-grid">
             <div class="info-card">
                 <p>
-                    <b>Id</b> {props.patient.id} <br />
+                    {/* <b>Id</b> {props.patient.id} <br /> */}
                     <b>Specialty</b> <Dynamic component={specialtyColors[props.patient.specialty]} /> <br />
                     <b>Gender</b> {props.patient.gender} <br />
                     <b>Age</b> {props.patient.age} <br />
@@ -46,7 +46,7 @@ export default function PatientCard(props: { patient: Patient, delete_callback: 
                     <b>Tests</b> {props.patient.testNames}<br />
                     <b>Results</b> {props.patient.testResults}
                 </p>
-                <button class='absolute top-0 right-0 px-2 hover:opacity-80' onClick={deletePatient} title="Delete Log">🅧</button>
+                <button class='absolute top-0 right-0 px-2 hover:opacity-50' onClick={deletePatient} disabled={!props.canDelete()} title="Delete Log">🅧</button>
             </div>
         </div>
     );
