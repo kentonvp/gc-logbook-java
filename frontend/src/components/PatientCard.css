@@ -1,0 +1,34 @@
+.patient-grid {
+    @apply
+      grid
+      grid-cols-6
+      gap-2
+      p-1
+}
+.info-card {
+  @apply
+    bg-purple-100
+    p-2
+    rounded-lg
+    shadow-sm
+    ml-2
+}
+
+.summary-card {
+  @apply
+    bg-purple-100
+    p-2
+    rounded-lg
+    shadow-sm
+    col-span-3
+}
+
+.results-card {
+  @apply
+    bg-purple-100
+    p-2
+    rounded-lg
+    shadow-sm
+    col-span-2
+    mr-2
+}

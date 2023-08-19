@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply
+    bg-white
+}
+
+h1 {
+  @apply
+    text-4xl
+}
+
+h2 {
+  @apply
+    text-xl
+}
+
+.btn {
+  @apply
+    border
+    bg-green-500
+    text-white
+    hover:bg-green-300
+
+}
+
+.patient-header {
+  @apply
+    bg-slate-400
+    border
+    border-slate-600
+    font-bold
+}
+
+.patient-cell {
+  @apply
+    bg-white
+    border
+    border-slate-700
+}
