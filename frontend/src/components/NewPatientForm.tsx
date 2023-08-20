@@ -49,7 +49,7 @@ export default function NewPatientForm(props: {successCallback: () => void, canc
 
     return (
         <div class="relative flex flex-col justify-between bg-purple-400 shadow-lg rounded-lg h-full">
-            <div>
+            <div class='flex flex-col justify-start'>
                 <h1 class="text-center p-5">New Patient Form</h1>
                 <div class="h-full">
                     <div class="grid grid-cols-6 gap-1 p-1 h-full">
@@ -106,8 +106,8 @@ export default function NewPatientForm(props: {successCallback: () => void, canc
                             </div>
                             <div>
                                 <label for="summary"><strong>Summary</strong></label>
-                                <textarea class="w-full h-full" name="summary" id="summary" maxLength={1000} value={summary()} onInput={(e) => setSummary(e.target.value)}></textarea>
-                                <p class="text-right">{summary().length}/1000</p>
+                                <textarea class="w-full h-full" name="summary" id="summary" maxLength={5000} value={summary()} onInput={(e) => setSummary(e.target.value)}></textarea>
+                                <p class="text-right">{summary().length}/5000</p>
                             </div>
                         </div>
                         <div class='col-span-2 m-2'>
